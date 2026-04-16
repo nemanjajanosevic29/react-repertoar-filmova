@@ -1,16 +1,30 @@
 import React from "react";
 
 function Movie(props) {
+  const { title, hall, price, poster } = props.movie;
+
   return (
     <div className="movie-row">
       <img 
-        src="https://i.pinimg.com/736x/aa/f7/05/aaf705e06726ce3881288ae4be3ac5fe.jpg" 
-        alt="clapperboard"
-        className="clapperboard"
+        src={poster} 
+        alt={title}
+        className="poster"
       />
-      <p className="movie-text">
-        {props.title}, sala: {props.hall}, cena: {props.price}din
-      </p>
+      
+      <div className="movie-text">
+        <p>
+          {title}
+          {hall 
+            ? `, sala: ${hall}, cena: ${price || 300}din` 
+            : ` - Film jos uvek nije u ponudi`
+          }
+        </p>
+      </div>
+
+      <div className="buttons">
+        <button onClick={() => props.onLike(props.movie)}>Like</button>
+        <button onClick={() => props.onDislike(props.movie)}>Dislike</button>
+      </div>
     </div>
   );
 }
