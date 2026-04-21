@@ -1,7 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
 function Movie(props) {
   const { title, hall, price, poster } = props.movie;
+
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
+
+  const onLike = async () => {
+    setLikes(prev => prev + 1);
+  };
+
+  const onDislike = async () => {
+    setDislikes(prev => prev + 1);
+  };
 
   return (
     <div className="movie-row">
@@ -19,11 +30,13 @@ function Movie(props) {
             : ` - Film jos uvek nije u ponudi`
           }
         </p>
+        <p>Likes: {likes}</p>
+        <p>Dislikes: {dislikes}</p>
       </div>
 
       <div className="buttons">
-        <button onClick={() => props.onLike(props.movie)}>Like</button>
-        <button onClick={() => props.onDislike(props.movie)}>Dislike</button>
+        <button onClick={() => onLike()}>Like</button>
+        <button onClick={() => onDislike()}>Dislike</button>
       </div>
     </div>
   );
