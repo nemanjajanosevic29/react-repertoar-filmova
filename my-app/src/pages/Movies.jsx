@@ -1,14 +1,12 @@
-import Movie from '../Movie';   
-import React from 'react';
+import React, { useState } from 'react';
+import Movie from '../Movie';
+import MovieForm from './MovieForm';
 
 function Movies() {
   const today = new Date();
-  const day = today.getDate();
-  const month = today.getMonth() + 1;
-  const year = today.getFullYear();
-  const dateString = `${day}.${month}.${year}.`;
+  const dateString = `${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear()}.`;
 
-  const movies = [
+  const [movies, setMovies] = useState([
     {
       title: "Captain America - The First Avenger",
       hall: 2,
@@ -30,33 +28,56 @@ function Movies() {
     {
       title: "Klaus",
       hall: 3,
+      price: 300,
       poster: "https://m.media-amazon.com/images/I/7128yjOjl9L.jpg"
     },
     {
       title: "Bullet Train",
       poster: "https://m.media-amazon.com/images/I/71INz6LX8aL._AC_UF894,1000_QL80_.jpg"
     }
-  ];
+  ]);
 
-  const handleLike = (movie) => {
-    alert(`Dodelili ste "Like" za film "${movie.title}"!`);
+  const [editMovie, setEditMovie] = useState(null);
+  const [editIndex, setEditIndex] = useState(null);
+
+  const handleFormSubmit = (movieData) => {
+    if (editMovie !== null) {
+      const updated = [...movies];
+      updated[editIndex] = movieData;
+      setMovies(updated);
+      setEditMovie(null);
+      setEditIndex(null);
+    } else {
+      setMovies(prev => [...prev, movieData]);
+    }
   };
 
-  const handleDislike = (movie) => {
-    alert(`Dodelili ste "Dislike" za film "${movie.title}"!`);
+  const handleEdit = (movie, index) => {
+    setEditMovie(movie);
+    setEditIndex(index);
+  };
+
+  const handleCancelEdit = () => {
+    setEditMovie(null);
+    setEditIndex(null);
   };
 
   return (
     <div>
       <h2>Repertoar za danas ({dateString})</h2>
-      
+
+      <MovieForm
+        onSubmit={handleFormSubmit}
+        editMovie={editMovie}
+        onCancelEdit={handleCancelEdit}
+      />
+
       <div className="movies-list">
         {movies.map((movie, index) => (
-          <Movie 
+          <Movie
             key={index}
             movie={movie}
-            onLike={handleLike}
-            onDislike={handleDislike}
+            onEdit={() => handleEdit(movie, index)}
           />
         ))}
       </div>

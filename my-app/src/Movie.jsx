@@ -37,6 +37,7 @@ function Movie(props) {
       <div className="buttons">
         <button onClick={() => onLike()}>Like</button>
         <button onClick={() => onDislike()}>Dislike</button>
+        <button onClick={() => props.onEdit()}>Izmeni</button>
       </div>
     </div>
   );
