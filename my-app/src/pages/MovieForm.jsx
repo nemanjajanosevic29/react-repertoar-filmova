@@ -80,7 +80,7 @@ function MovieForm({ onSubmit, editMovie, onCancelEdit }) {
 
         <div className="form-buttons">
           <button type="submit">
-            {editMovie ? 'Sačuvaj izmene' : 'Dodaj film'}
+            {editMovie ? 'Sacuvaj izmene' : 'Dodaj film'}
           </button>
 
           {editMovie && (

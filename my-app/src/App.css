@@ -277,3 +277,25 @@
   background: #c8102e;
   color: white;
 }
+
+.best-movie {
+  background: #fff8e1;
+  border-left: 5px solid #f9a825;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.best-movie h3 {
+  margin: 0 0 6px;
+  color: #f57f17;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.best-movie p {
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
