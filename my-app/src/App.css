@@ -103,6 +103,44 @@
   font-size: 1.1rem;
 }
 
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.error-msg {
+  background: #fff0f0;
+  border-left: 5px solid #e53e3e;
+  padding: 12px 16px;
+  border-radius: 6px;
+  color: #c53030;
+  margin-bottom: 20px;
+}
+
+.best-movie {
+  background: #fff8e1;
+  border-left: 5px solid #f9a825;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.best-movie h3 {
+  margin: 0 0 6px;
+  color: #f57f17;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.best-movie p {
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
+
 .movie-form {
   background: white;
   border-radius: 12px;
@@ -261,7 +299,8 @@
   background: #222;
 }
 
-.buttons button:nth-child(3) {
+.buttons button:nth-child(3),
+.buttons a button {
   background: white;
   color: #c8102e;
   border: 1.5px solid #c8102e;
@@ -271,31 +310,60 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  width: 100%;
 }
 
-.buttons button:nth-child(3):hover {
+.buttons button:nth-child(3):hover,
+.buttons a button:hover {
   background: #c8102e;
   color: white;
 }
 
-.best-movie {
-  background: #fff8e1;
-  border-left: 5px solid #f9a825;
-  border-radius: 8px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
+.buttons button:nth-child(4) {
+  background: white;
+  color: #e53e3e;
+  border: 1.5px solid #e53e3e;
+  padding: 7px 18px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.best-movie h3 {
-  margin: 0 0 6px;
-  color: #f57f17;
+.buttons button:nth-child(4):hover {
+  background: #e53e3e;
+  color: white;
+}
+
+.buttons a {
+  text-decoration: none;
+}
+
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  gap: 16px;
+}
+
+.spinner-container p {
+  color: #666;
   font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
-.best-movie p {
-  margin: 0;
-  font-weight: 600;
-  color: #333;
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #f0f0f0;       
+  border-top: 5px solid #c8102e;   
+  border-radius: 50%;              
+  animation: spin 0.8s linear infinite; 
+}
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

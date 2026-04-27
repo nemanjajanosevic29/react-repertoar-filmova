@@ -1,19 +1,20 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Movie(props) {
-  const { title, hall, price, poster, likes, dislikes } = props.movie;
+  const { id, name, hall, price, poster, likes, dislikes } = props.movie;
 
   return (
     <div className="movie-row">
       <img
         src={poster}
-        alt={title}
+        alt={name}
         className="poster"
       />
 
       <div className="movie-text">
         <p>
-          {title}
+          {name}
           {hall
             ? `, sala: ${hall}, cena: ${price || 300}din`
             : ` - Film jos uvek nije u ponudi`
@@ -26,7 +27,10 @@ function Movie(props) {
       <div className="buttons">
         <button onClick={() => props.onLike()}>Like</button>
         <button onClick={() => props.onDislike()}>Dislike</button>
-        <button onClick={() => props.onEdit()}>Izmeni</button>
+        <Link to={`/movies/edit/${id}`}>
+          <button>Izmeni</button>
+        </Link>
+        <button onClick={() => props.onDelete()}>Obriši</button>
       </div>
     </div>
   );

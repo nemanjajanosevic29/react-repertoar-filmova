@@ -1,25 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import Movie from '../Movie';
-import MovieForm from './MovieForm';
+import { getAllMovies, likeMovie, dislikeMovie, deleteMovie } from '../services/movieService';
+import { Link } from 'react-router-dom';
 
 function Movies() {
   const today = new Date();
   const dateString = `${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear()}.`;
 
-  const [movies, setMovies] = useState([
-    { title: "Captain America - The First Avenger", hall: 2, price: 350, poster: "https://m.media-amazon.com/images/I/51Xp+8qDCbL._AC_UF350,350_QL50_.jpg", likes: 0, dislikes: 0 },
-    { title: "The Papillon", hall: 1, price: 300, poster: "https://m.media-amazon.com/images/M/MV5BMjIxMTMyOTE2NF5BMl5BanBnXkFtZTgwMDYyNzY1NTM@._V1_.jpg", likes: 0, dislikes: 0 },
-    { title: "The Lost City of Z", hall: 5, price: 350, poster: "https://m.media-amazon.com/images/M/MV5BZmU2ODIyMWItMjU3Zi00ZmVhLWIyNDAtMWE5OWU2ZDExMGFiXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg", likes: 0, dislikes: 0 },
-    { title: "Klaus", hall: 3, price: 300, poster: "https://m.media-amazon.com/images/I/7128yjOjl9L.jpg", likes: 0, dislikes: 0 },
-    { title: "Bullet Train", poster: "https://m.media-amazon.com/images/I/71INz6LX8aL._AC_UF894,1000_QL80_.jpg", likes: 0, dislikes: 0 }
-  ]);
-
-  const [editMovie, setEditMovie] = useState(null);
-  const [editIndex, setEditIndex] = useState(null);
+  const [movies, setMovies] = useState([]);
   const [bestMovie, setBestMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const fetchMovies = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllMovies();
+      setMovies(data);
+      setErrorMsg('');
+    } catch (error) {
+      setErrorMsg('Greska pri ucitavanju filmova. Proverite da li je server pokrenut.');
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     console.log("Postavka filmova");
+    fetchMovies();
 
     return () => {
       console.log("Sklanjanje filmova");
@@ -28,77 +35,71 @@ function Movies() {
 
   useEffect(() => {
     if (movies.length === 0) return;
-
-    const best = movies.reduce((prev, current) => {
-      const prevScore = prev.likes - prev.dislikes;
-      const currentScore = current.likes - current.dislikes;
-      return currentScore > prevScore ? current : prev;
-    });
-
+    const best = movies.reduce((prev, current) =>
+      (current.likes - current.dislikes) > (prev.likes - prev.dislikes) ? current : prev
+    );
     setBestMovie(best);
   }, [movies]);
 
-  const handleFormSubmit = (movieData) => {
-    if (editMovie !== null) {
-      const updated = [...movies];
-      updated[editIndex] = { ...movieData, likes: movies[editIndex].likes, dislikes: movies[editIndex].dislikes };
-      setMovies(updated);
-      setEditMovie(null);
-      setEditIndex(null);
-    } else {
-      const randomLikes = Math.floor(Math.random() * 5) + 1;
-      const randomDislikes = Math.floor(Math.random() * 5) + 1;
-      setMovies(prev => [...prev, { ...movieData, likes: randomLikes, dislikes: randomDislikes }]);
+  const handleLike = async (id) => {
+    try {
+      await likeMovie(id);
+      setMovies(prev => prev.map(m =>
+        m.id === id ? { ...m, likes: m.likes + 1 } : m
+      ));
+    } catch (error) {
+      setErrorMsg('Greska pri lajkovanju filma.');
     }
   };
 
-  const handleLike = (index) => {
-    const updated = [...movies];
-    updated[index] = { ...updated[index], likes: updated[index].likes + 1 };
-    setMovies(updated);
+  const handleDislike = async (id) => {
+    try {
+      await dislikeMovie(id);
+      setMovies(prev => prev.map(m =>
+        m.id === id ? { ...m, dislikes: m.dislikes + 1 } : m
+      ));
+    } catch (error) {
+      setErrorMsg('Greska pri dislajkovanju filma.');
+    }
   };
 
-  const handleDislike = (index) => {
-    const updated = [...movies];
-    updated[index] = { ...updated[index], dislikes: updated[index].dislikes + 1 };
-    setMovies(updated);
+  const handleDelete = async (id) => {
+    try {
+      await deleteMovie(id);
+      setMovies(prev => prev.filter(m => m.id !== id));
+    } catch (error) {
+      setErrorMsg('Greska pri brisanju filma.');
+    }
   };
 
-  const handleEdit = (movie, index) => {
-    setEditMovie(movie);
-    setEditIndex(index);
-  };
-
-  const handleCancelEdit = () => {
-    setEditMovie(null);
-    setEditIndex(null);
-  };
+  if (loading) return (
+  <div className="spinner-container">
+    <div className="spinner"></div>
+    <p>Ucitavanje filmova...</p>
+  </div>
+  );
 
   return (
     <div>
       <h2>Repertoar za danas ({dateString})</h2>
 
+      {errorMsg && <p className="error-msg">{errorMsg}</p>}
+
       {bestMovie && (
         <div className="best-movie">
           <h3>Najbolje ocenjen film</h3>
-          <p>{bestMovie.title} — ocena: {bestMovie.likes - bestMovie.dislikes}</p>
+          <p>{bestMovie.name} — ocena: {bestMovie.likes - bestMovie.dislikes}</p>
         </div>
       )}
 
-      <MovieForm
-        onSubmit={handleFormSubmit}
-        editMovie={editMovie}
-        onCancelEdit={handleCancelEdit}
-      />
-
       <div className="movies-list">
-        {movies.map((movie, index) => (
+        {movies.map((movie) => (
           <Movie
-            key={index}
+            key={movie.id}
             movie={movie}
-            onLike={() => handleLike(index)}
-            onDislike={() => handleDislike(index)}
-            onEdit={() => handleEdit(movie, index)}
+            onLike={() => handleLike(movie.id)}
+            onDislike={() => handleDislike(movie.id)}
+            onDelete={() => handleDelete(movie.id)}
           />
         ))}
       </div>
